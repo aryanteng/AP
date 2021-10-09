@@ -12,10 +12,9 @@ public class Assignment1 {
             vgap = gap;
         }
         void display(){
-            System.out.print("Vaccine Name: " + vname + ",");
-            System.out.print("Number of Doses: " + vdoses + ",");
+            System.out.print("Vaccine Name: " + vname + ", ");
+            System.out.print("Number of Doses: " + vdoses + ", ");
             System.out.print("Gap between Doses: " + vgap);
-
         }
     }
     public static class Hospital{
@@ -28,9 +27,24 @@ public class Assignment1 {
             hunique_id = unique_id;
         }
         void display(){
-            System.out.print("Hospital Name: " + hname + ",");
-            System.out.print("PinCode: " + hpin + ",");
+            System.out.print("Hospital Name: " + hname + ", ");
+            System.out.print("PinCode: " + hpin + ", ");
             System.out.print("Unique ID: " + hunique_id);
+        }
+    }
+    public static class Slot{
+        int shid;
+        int sday;
+        int squantity;
+        String vname;
+        Slot(int hid, int day, int quantity, String name){
+            shid = hid;
+            sday = day;
+            squantity = quantity;
+            vname = name;
+        }
+        void display(){
+            System.out.println("Slot added by Hospital " + shid + " for Day: " + sday + ", " + "Available Quantity: " + squantity + " of Vaccine " + vname);
         }
     }
     public static class Citizen{
@@ -44,8 +58,8 @@ public class Assignment1 {
         }
         void display(){
             System.out.print("Citizen Name: " + cname + ",");
-            System.out.print("Age: " + cage + ",");
-            System.out.print("Unique ID: " + cunique_id);
+            System.out.print(" Age: " + cage + ",");
+            System.out.print(" Unique ID: " + cunique_id);
             if (cage < 18){
                 System.out.println("Only above 18 are allowed");
             }
@@ -54,9 +68,21 @@ public class Assignment1 {
     public static void main(String[] args) {
         int tag = 0;
         Scanner sc = new Scanner(System.in);
+        Vaccine[] vaccines;
+        vaccines = new Vaccine[100];
+        Hospital[] hospitals;
+        hospitals = new Hospital[100];
+        Citizen[] citizens;
+        citizens = new Citizen[100];
+        Slot[] slots;
+        slots = new Slot[100];
+        int vcount = 0;
+        int hcount = 0;
+        int ccount = 0;
+        int scount = 0;
+        System.out.println("\nCoWin Portal initialized....");
         while(tag != 1){
-            System.out.println("CoWin Portal initialized....");
-            System.out.println("---------------------------------");
+            System.out.println("\n---------------------------------");
             System.out.println("1. Add Vaccine");
             System.out.println("2. Register Hospital");
             System.out.println("3. Register Citizen");
@@ -73,45 +99,57 @@ public class Assignment1 {
             }
             else if (input == 1){
                 System.out.print("Vaccine Name: ");
-                String name = sc.nextLine();
+                String name = sc.next();
                 System.out.print("Number of Doses: ");
                 int doses = sc.nextInt();
                 System.out.print("Gap between Doses: ");
                 int gap = sc.nextInt();
-                Vaccine v = new Vaccine(name,doses,gap);
-                v.display();
+                vaccines[vcount] = new Vaccine(name,doses,gap);
+                vaccines[vcount].display();
+                vcount++;
             }
             else if (input == 2){
                 Random rand = new Random();
                 System.out.print("Hospital Name: ");
-                String name = sc.nextLine();
+                String name = sc.next();
                 System.out.print("PinCode: ");
                 int pin = sc.nextInt();
                 int unique_id = rand.nextInt(999999);
-                Hospital h = new Hospital(name, pin, unique_id);
-                h.display();
+                hospitals[hcount] = new Hospital(name, pin, unique_id);
+                hospitals[hcount].display();
+                hcount++;
             }
             else if (input == 3){
                 System.out.print("Citizen Name: ");
                 String name = sc.nextLine();
                 System.out.print("Age: ");
-                int age = 
-
-
-
-
-
+                int age = sc.nextInt();
+                System.out.print("Unique ID: ");
+                int unique_id = sc.nextInt();
+                citizens[ccount] = new Citizen(name, age, unique_id);
+                citizens[ccount].display();
+                ccount++;
             }
-
-
+            else if (input == 4){
+                System.out.print("Enter Hospital ID: ");
+                int id = sc.nextInt();
+                System.out.print("Enter number of Slots to be added: ");
+                int number = sc.nextInt();
+                for(int i = 0; i < number; i++){
+                    System.out.print("Enter Day Number: ");
+                    int day = sc.nextInt();
+                    System.out.print("Enter Quantity: ");
+                    int quantity = sc.nextInt();
+                    System.out.println("Select Vaccine");
+                    for(int j = 0; j < vcount; j++){
+                        System.out.println(j + ". " + vaccines[j].vname);
+                    }
+                    int choice = sc.nextInt();
+                    slots[scount] = new Slot(id, day, quantity, vaccines[choice].vname);
+                    slots[scount].display();
+                    scount++;
+                }
+            }
         }
-
-
-
-
     }
-
-
-
-
 }
