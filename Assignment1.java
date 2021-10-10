@@ -54,10 +54,14 @@ public class Assignment1 {
         String cname;
         int cage;
         String cunique_id;
-        Citizen(String name, int age, String unique_id){
+        String cstatus;
+        String cvname;
+        int cdoses = 0;
+        Citizen(String name, int age, String unique_id, String status){
             cname = name;
             cage = age;
             cunique_id = unique_id;
+            cstatus = status;
         }
         void display(){
             System.out.print("Citizen Name: " + cname + ",");
@@ -66,6 +70,15 @@ public class Assignment1 {
             if (cage < 18){
                 System.out.println("\nOnly above 18 are allowed");
             }
+        }
+        void status(){
+            System.out.println(cstatus);
+        }
+        void vaccine_name(String vname){
+            cvname = vname;
+        }
+        void add_doses_given(){
+            cdoses++;
         }
     }
     public static void main(String[] args) {
@@ -129,7 +142,7 @@ public class Assignment1 {
                 int age = sc.nextInt();
                 System.out.print("Unique ID: ");
                 String unique_id = sc.next();
-                citizens[ccount] = new Citizen(name, age, unique_id);
+                citizens[ccount] = new Citizen(name, age, unique_id, "REGISTERED");
                 citizens[ccount].display();
                 ccount++;
             }
@@ -194,6 +207,19 @@ public class Assignment1 {
                     for(int k = 0; k < ccount; k++){
                         if(Objects.equals(puid, citizens[k].cunique_id)){
                             System.out.println(citizens[k].cname + " vaccinated with " + arr[choose]);
+                            citizens[k].vaccine_name(arr[choose]);
+                            citizens[k].add_doses_given();
+                            for(int a = 0; a < scount; a++){
+                                if(id == slots[a].shid && Objects.equals(arr[choose], slots[a].vname)){
+                                    slots[a].squantity = slots[a].squantity - 1;
+                                    if (slots[a].squantity == 0){
+                                        citizens[k].cstatus = "FULLY VACCINATED";
+                                    }
+                                    else if (slots[a].squantity > 0){
+                                        citizens[k].cstatus = "PARTIALLY VACCINATED";
+                                    }
+                                }
+                            }
                         }
                     }
                 }
@@ -220,6 +246,19 @@ public class Assignment1 {
                     for(int k = 0; k < ccount; k++){
                         if(Objects.equals(puid, citizens[k].cunique_id)){
                             System.out.println(citizens[k].cname + " vaccinated with " + arr[choose]);
+                            citizens[k].vaccine_name(arr[choose]);
+                            citizens[k].add_doses_given();
+                            for(int a = 0; a < scount; a++){
+                                if(id == slots[a].shid && Objects.equals(arr[choose], slots[a].vname)){
+                                    slots[a].squantity = slots[a].squantity - 1;
+                                }
+                            }
+                            if (slots[a].squantity == 0){
+                                citizens[k].cstatus = "FULLY VACCINATED";
+                            }
+                            else if (slots[a].squantity > 0){
+                                citizens[k].cstatus = "PARTIALLY VACCINATED";
+                            }
                         }
                     }
                 }
@@ -242,7 +281,18 @@ public class Assignment1 {
             else if(input == 7){
                 System.out.print("Enter Patient ID: ");
                 String pid = sc.next();
-                System.out.println("");
+                for(int i = 0; i < ccount; i++){
+                    if (Objects.equals(pid, citizens[i].cunique_id)){
+                        citizens[i].status();
+                        System.out.println("Vaccine Given: " + citizens[i].cvname);
+                        System.out.println("Number of Doses given: " + citizens[i].cdoses);
+                        for(int j = 0; j < vcount; j++){
+                            if(Objects.equals(vaccines[j].vname, citizens[i].cvname)){
+                                System.out.println("Next Dose due date: " + vaccines[j].vgap);
+                            }
+                        }
+                    }
+                }
             }
             else{
                 System.out.println("PLease enter a valid task!");
