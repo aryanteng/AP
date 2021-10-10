@@ -1,3 +1,4 @@
+import java.util.Objects;
 import java.util.Random;
 import java.util.Scanner;
 
@@ -37,11 +38,13 @@ public class Assignment1 {
         int sday;
         int squantity;
         String vname;
-        Slot(int hid, int day, int quantity, String name){
+        String hname;
+        Slot(int hid, int day, int quantity, String name, String hospital){
             shid = hid;
             sday = day;
             squantity = quantity;
             vname = name;
+            hname = hospital;
         }
         void display(){
             System.out.println("Slot added by Hospital " + shid + " for Day: " + sday + ", " + "Available Quantity: " + squantity + " of Vaccine " + vname);
@@ -50,8 +53,8 @@ public class Assignment1 {
     public static class Citizen{
         String cname;
         int cage;
-        int cunique_id;
-        Citizen(String name, int age, int unique_id){
+        String cunique_id;
+        Citizen(String name, int age, String unique_id){
             cname = name;
             cage = age;
             cunique_id = unique_id;
@@ -61,7 +64,7 @@ public class Assignment1 {
             System.out.print(" Age: " + cage + ",");
             System.out.print(" Unique ID: " + cunique_id);
             if (cage < 18){
-                System.out.println("Only above 18 are allowed");
+                System.out.println("\nOnly above 18 are allowed");
             }
         }
     }
@@ -121,11 +124,11 @@ public class Assignment1 {
             }
             else if (input == 3){
                 System.out.print("Citizen Name: ");
-                String name = sc.nextLine();
+                String name = sc.next();
                 System.out.print("Age: ");
                 int age = sc.nextInt();
                 System.out.print("Unique ID: ");
-                int unique_id = sc.nextInt();
+                String unique_id = sc.next();
                 citizens[ccount] = new Citizen(name, age, unique_id);
                 citizens[ccount].display();
                 ccount++;
@@ -133,6 +136,12 @@ public class Assignment1 {
             else if (input == 4){
                 System.out.print("Enter Hospital ID: ");
                 int id = sc.nextInt();
+                String hname = "";
+                for(int x = 0; x < hcount; x++){
+                    if (hospitals[x].hunique_id == id){
+                        hname = hospitals[x].hname;
+                    }
+                }
                 System.out.print("Enter number of Slots to be added: ");
                 int number = sc.nextInt();
                 for(int i = 0; i < number; i++){
@@ -145,10 +154,89 @@ public class Assignment1 {
                         System.out.println(j + ". " + vaccines[j].vname);
                     }
                     int choice = sc.nextInt();
-                    slots[scount] = new Slot(id, day, quantity, vaccines[choice].vname);
+                    slots[scount] = new Slot(id, day, quantity, vaccines[choice].vname, hname);
                     slots[scount].display();
                     scount++;
                 }
+            }
+            else if (input == 5){
+                System.out.print("Enter patient Unique ID: ");
+                String puid = sc.next();
+                System.out.println("1. Search by Area");
+                System.out.println("2. Search by Vaccine");
+                System.out.println("3. Exit");
+                System.out.print("Enter Option: ");
+                int option = sc.nextInt();
+                if (option == 1){
+                    System.out.print("Enter PinCode: ");
+                    int pin = sc.nextInt();
+                    for (int i = 0; i < hcount; i++){
+                        if (pin == hospitals[i].hpin){
+                            System.out.print(hospitals[i].hunique_id);
+                            System.out.print(" ");
+                            System.out.print(hospitals[i].hname);
+                        }
+                    }
+                    System.out.println("\n");
+                    System.out.print("Enter Hospital ID: ");
+                    int id = sc.nextInt();
+                    int l = 0;
+                    String[] arr = new String[scount];
+                    for(int j = 0; j < scount; j++){
+                        if(id == slots[j].shid){
+                            System.out.println(l + "-> " + "Day: " + slots[j].sday + " Available Qty: " + slots[j].squantity + " Vaccine: " + slots[j].vname);
+                            arr[l] = slots[j].vname;
+                            l++;
+                        }
+                    }
+                    System.out.print("Choose Slot: ");
+                    int choose = sc.nextInt();
+                    for(int k = 0; k < ccount; k++){
+                        if(Objects.equals(puid, citizens[k].cunique_id)){
+                            System.out.println(citizens[k].cname + " vaccinated with " + arr[choose]);
+                        }
+                    }
+                }
+                else if (option == 2){
+                    System.out.print("Enter Vaccine Name: ");
+                    String vaccine = sc.next();
+                    for(int i = 0; i < scount; i++){
+                        if (Objects.equals(slots[i].vname, vaccine)){
+                            System.out.println(slots[i].shid + " " + slots[i].hname);
+                        }
+                    }
+                    System.out.print("Enter Hospital ID: ");
+                    int id = sc.nextInt();
+                    int l = 0;
+                    String[] arr = new String[scount];
+                    for(int j = 0; j < scount; j++){
+                        if(id == slots[j].shid){
+                            System.out.println(l + "-> " + "Day: " + slots[j].sday + " Available Qty: " + slots[j].squantity + " Vaccine: " + slots[j].vname);
+                            arr[l] = slots[j].vname;
+                            l++;
+                        }
+                    }
+                    int choose = sc.nextInt();
+                    for(int k = 0; k < ccount; k++){
+                        if(Objects.equals(puid, citizens[k].cunique_id)){
+                            System.out.println(citizens[k].cname + " vaccinated with " + arr[choose]);
+                        }
+                    }
+                }
+            }
+            else if (input == 6){
+                System.out.print("Enter Hospital ID: ");
+                int id = sc.nextInt();
+                for(int j = 0; j < scount; j++){
+                    if (id == slots[j].shid){
+                        System.out.println("Day: " + slots[j].sday + " Available Qty: " + slots[j].squantity + " Vaccine: " + slots[j].vname);
+                    }
+                }
+            }
+            else if(input == 7){
+                System.out.print("Enter Patient ID: ");
+                String pid = sc.next();
+                System.out.println("");
             }
         }
     }
