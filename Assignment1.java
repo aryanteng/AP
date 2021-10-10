@@ -223,6 +223,12 @@ public class Assignment1 {
                         }
                     }
                 }
+                else if (option == 3){
+                    break;
+                }
+                else{
+                    System.out.println("Please enter a valid option!");
+                }
             }
             else if (input == 6){
                 System.out.print("Enter Hospital ID: ");
@@ -237,6 +243,9 @@ public class Assignment1 {
                 System.out.print("Enter Patient ID: ");
                 String pid = sc.next();
                 System.out.println("");
+            }
+            else{
+                System.out.println("PLease enter a valid task!");
             }
         }
     }
