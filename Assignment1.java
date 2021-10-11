@@ -70,9 +70,6 @@ public class Assignment1 {
             System.out.print("Citizen Name: " + cname + ",");
             System.out.print(" Age: " + cage + ",");
             System.out.print(" Unique ID: " + cunique_id);
-            if (cage < 18){
-                System.out.println("\nOnly above 18 are allowed");
-            }
         }
         void status(){
             System.out.println(cstatus);
@@ -84,7 +81,7 @@ public class Assignment1 {
             cdoses++;
         }
         void add_slot_day(int slot){
-            cslot += slot;
+            cslot = slot;
         }
     }
     public static void main(String[] args) {
@@ -104,6 +101,7 @@ public class Assignment1 {
         int ccount = 0;
         int scount = 0;
         System.out.println("\nCoWin Portal initialized....");
+        label:
         while (tag != 1) {
             System.out.println("\n---------------------------------");
             System.out.println("1. Add Vaccine");
@@ -171,13 +169,18 @@ public class Assignment1 {
                     if (Objects.equals(citizens[i].cunique_id, unique_id)) {
                         System.out.println("This Citizen already exists!");
                         val++;
-                        break;
                     }
                 }
                 if (val == 0) {
-                    citizens[ccount] = new Citizen(name, age, unique_id, "REGISTERED");
-                    citizens[ccount].display();
-                    ccount++;
+                    if(age > 18) {
+                        citizens[ccount] = new Citizen(name, age, unique_id, "REGISTERED");
+                        citizens[ccount].display();
+                        ccount++;
+                    }
+                    else{
+                        System.out.println("Citizen Name: " + name + ", " + "Age: " + age + ", " + "Unique ID: " + unique_id);
+                        System.out.println("Only above 18 are allowed!");
+                    }
                 }
             } else if (input == 4) {
                 System.out.print("Enter Hospital ID: ");
@@ -202,6 +205,7 @@ public class Assignment1 {
                         for (int j = 0; j < vcount; j++) {
                             System.out.println(j + ". " + vaccines[j].vname);
                         }
+
                         int choice = sc.nextInt();
                         slots[scount] = new Slot(id, day, quantity, vaccines[choice].vname, hname, vaccines[choice].vgap);
                         slots[scount].display();
@@ -220,15 +224,15 @@ public class Assignment1 {
                         val++;
                         if (Objects.equals(citizens[i].cstatus, "FULLY VACCINATED")){
                             System.out.println("Citizen is already fully vaccinated!");
+                            continue label;
                         }
-                        break;
                     }
                 }
                 if (val > 0) {
                     System.out.println("1. Search by Area");
                     System.out.println("2. Search by Vaccine");
                     System.out.println("3. Exit");
-                    System.out.print("Enter Option: ");
+                    System.out.print("Enter option: ");
                     int option = sc.nextInt();
                     if (option == 1) {
                         System.out.print("Enter PinCode: ");
@@ -255,7 +259,7 @@ public class Assignment1 {
                                     for (int i = 0; i < ccount; i++){
                                         if(Objects.equals(citizens[i].cunique_id, puid)){
                                             if(citizens[i].cslot != 0){
-                                                if ((citizens[i].cslot + slots[j].sgap) <= slots[j].sday){
+                                                if ((citizens[i].cslot + slots[j].sgap) <= slots[j].sday && Objects.equals(citizens[i].cvname, slots[j].vname)){
                                                     System.out.println(l + "-> " + "Day: " + slots[j].sday + " Available Qty: " + slots[j].squantity + " Vaccine: " + slots[j].vname);
                                                     arr[l] = slots[j].vname;
                                                     slot_days[l] = slots[j].sday;
@@ -276,7 +280,6 @@ public class Assignment1 {
                             }
                             if(r == 0){
                                 System.out.println("No Slots Available!");
-                                break;
                             }
                             if (l > 0) {
                                 System.out.print("Choose Slot: ");
@@ -319,6 +322,14 @@ public class Assignment1 {
                                 n++;
                             }
                         }
+                        for (int x = 0; x < ccount; x++){
+                            if(citizens[x].cdoses > 0 && Objects.equals(citizens[x].cunique_id, puid)){
+                                if(!Objects.equals(citizens[x].cvname, vaccine)){
+                                    System.out.println("This Citizen has already taken another vaccine!");
+                                    continue label;
+                                }
+                            }
+                        }
                         if (n > 0) {
                             System.out.print("Enter Hospital ID: ");
                             int id = sc.nextInt();
@@ -328,10 +339,10 @@ public class Assignment1 {
                             int r = 0;
                             for (int j = 0; j < scount; j++) {
                                 if (id == slots[j].shid) {
-                                    for (int i = 0; i < ccount; i++) {
+                                    for (int i = 0; i < ccount; i++){
                                         if (Objects.equals(citizens[i].cunique_id, puid)) {
                                             if (citizens[i].cslot != 0) {
-                                                if ((citizens[i].cslot + slots[j].sgap) <= slots[j].sday) {
+                                                if ((citizens[i].cslot + slots[j].sgap) <= slots[j].sday && Objects.equals(citizens[i].cvname, slots[j].vname)) {
                                                     System.out.println(l + "-> " + "Day: " + slots[j].sday + " Available Qty: " + slots[j].squantity + " Vaccine: " + slots[j].vname);
                                                     arr[l] = slots[j].vname;
                                                     slot_days[l] = slots[j].sday;
@@ -339,19 +350,21 @@ public class Assignment1 {
                                                     r++;
                                                 }
                                             } else {
-                                                System.out.println(l + "-> " + "Day: " + slots[j].sday + " Available Qty: " + slots[j].squantity + " Vaccine: " + slots[j].vname);
-                                                arr[l] = slots[j].vname;
-                                                slot_days[l] = slots[j].sday;
-                                                l++;
-                                                r++;
+                                                if(Objects.equals(slots[j].vname, vaccine)) {
+                                                    System.out.println(l + "-> " + "Day: " + slots[j].sday + " Available Qty: " + slots[j].squantity + " Vaccine: " + slots[j].vname);
+                                                    arr[l] = slots[j].vname;
+                                                    slot_days[l] = slots[j].sday;
+                                                    l++;
+                                                    r++;
+                                                }
                                             }
                                         }
                                     }
                                 }
                             }
-                            if(r == 0) {
+                            if(l == 0) {
                                 System.out.println("No Slots Available!");
-                                break;
+                                continue label;
                             }
                             if (l > 0) {
                                 int choose = sc.nextInt();
@@ -377,14 +390,14 @@ public class Assignment1 {
                                         }
                                     }
                                 }
-                            } else {
+                            } else if (r == 0){
                                 System.out.println("This Hospital ID does not exist!");
                             }
                         } else {
                             System.out.println("This Vaccine does not exist!");
                         }
                     } else if (option == 3) {
-                        break;
+                        continue label;
                     } else {
                         System.out.println("Please enter a valid option!");
                     }
@@ -394,33 +407,52 @@ public class Assignment1 {
             } else if (input == 6) {
                 System.out.print("Enter Hospital ID: ");
                 int id = sc.nextInt();
-                for (int j = 0; j < scount; j++) {
-                    if (id == slots[j].shid) {
-                        System.out.println("Day: " + slots[j].sday + ", Vaccine: " + slots[j].vname + ", Available Qty: " + slots[j].squantity);
+                int val = 0;
+                for (int i = 0; i < hcount; i++){
+                    if(hospitals[i].hunique_id == id){
+                        val++;
+                        break;
+                    }
+                }
+                if(val > 0) {
+                    for (int j = 0; j < scount; j++) {
+                        if (id == slots[j].shid) {
+                            System.out.println("Day: " + slots[j].sday + ", Vaccine: " + slots[j].vname + ", Available Qty: " + slots[j].squantity);
+                        }
                     }
                 }
             } else if (input == 7) {
                 System.out.print("Enter Patient ID: ");
                 String pid = s.next();
+                int val = 0;
                 for (int i = 0; i < ccount; i++) {
                     if (Objects.equals(pid, citizens[i].cunique_id)) {
-                        citizens[i].status();
-                        if (!Objects.equals(citizens[i].cstatus, "REGISTERED")) {
-                            System.out.println("Vaccine Given: " + citizens[i].cvname);
-                            System.out.println("Number of Doses given: " + citizens[i].cdoses);
-                            if (Objects.equals(citizens[i].cstatus, "FULLY VACCINATED")){
-                                break;
-                            }
-                            else{
-                                for (int j = 0; j < vcount; j++) {
-                                    if (Objects.equals(vaccines[j].vname, citizens[i].cvname)) {
-                                        System.out.println("Next Dose due date: " + (vaccines[j].vgap + 1));
+                        val++;
+                    }
+                }
+                if (val > 0){
+                    for (int i = 0; i < ccount; i++) {
+                        if (Objects.equals(pid, citizens[i].cunique_id)) {
+                            citizens[i].status();
+                            if (!Objects.equals(citizens[i].cstatus, "REGISTERED")) {
+                                System.out.println("Vaccine Given: " + citizens[i].cvname);
+                                System.out.println("Number of Doses given: " + citizens[i].cdoses);
+                                if (Objects.equals(citizens[i].cstatus, "FULLY VACCINATED")) {
+                                    continue label;
+                                } else {
+                                    for (int j = 0; j < vcount; j++) {
+                                        if (Objects.equals(vaccines[j].vname, citizens[i].cvname)) {
+                                            System.out.println("Next Dose due date: " + (citizens[i].cslot + vaccines[j].vgap));
+                                        }
                                     }
-                                }
 
+                                }
                             }
                         }
                     }
+                }
+                else{
+                    System.out.println("This Citizen does not exist!");
                 }
             } else {
                 System.out.println("Please enter a valid task!");
@@ -430,6 +462,7 @@ public class Assignment1 {
     s.close();
     }
 }
+
 
 
 
